@@ -53,4 +53,4 @@ jobs:
           app-name: 'glowiechat'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_16F1BFDC04AA49F591C72A9350E84066 }}
-          package: .
+          package: build

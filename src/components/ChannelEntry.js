@@ -12,7 +12,7 @@ const exampleProps = {
 export default props => {
     const channel = props.data
     return (
-            <div className={props.active ? 'channel light': 'channel'} onClick={() => props.setActiveHandler(channel)} >
+            <div className={props.active ? 'channel light': 'channel'} onClick={() => props.setActiveHandler(channel,props.active)} >
                 <img 
                     className='logo' 
                     src={exampleProps.logo}

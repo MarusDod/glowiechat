@@ -30,11 +30,7 @@ export default () => {
 
     const currentChannel = useSelector(state => state.currentChannel.value)
     const nick = useSelector(state => state.nick.value)
-
-    const exampleMsg = {
-        content:"fds",
-        nick
-    }
+    const server = useSelector(state => state.server.value)
 
     const [messages,setMessages] = useState([])
 
@@ -49,7 +45,7 @@ export default () => {
         ircClient.joinChannel(currentChannel.name,message => {
             setMessages(messages => [message,...messages])
         })
-    },[currentChannel,nick])
+    },[currentChannel,nick,server])
 
     const handleMessageSubmit = ev => {
         ev.preventDefault()
@@ -70,6 +66,7 @@ export default () => {
 
     return (
         <div className="chat">
+            {currentChannel && (<>
             <div style={messageListStyle}>
                 {messages.map((m,index) => (
                     <Message key={index} data={m} />
@@ -81,9 +78,8 @@ export default () => {
                         <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z"/>
                     </svg>
                 </div>
-                <form style={{flex:1}}>
+                <form onSubmit={handleMessageSubmit} style={{flex:1}}>
                     <input 
-                        onSubmit={handleMessageSubmit}
                         type="text" 
                         value={inputMessage} 
                         onChange={ev => setInputMessage(ev.target.value)} 
@@ -96,7 +92,7 @@ export default () => {
                         <path d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"/>
                     </svg>
                 </div>
-            </div>
+            </div></>)}
         </div>
     )
 }

@@ -5,7 +5,7 @@ class IrcClient {
     #ready
     #pending
 
-    constructor({server,nickname,username = nickname}) {
+    constructor({server,nickname,username = nickname,pass=""}) {
         this.#counter = 0
         this.#ready = false
         this.#pending = []
@@ -67,7 +67,63 @@ class IrcClient {
                 }
             })
         })
+    }
 
+    static connect({nick,user = nick,pass = "",server}){
+        return new Promise((resolve,reject) => {
+            const socket = new WebSocket(`ws://${server}`)
+
+            const hostname = new URL('ws://' + server).hostname
+
+            socket.onopen = () => {
+                console.log("connected")
+
+                if(pass)
+                    socket.send(`PASS ${pass}`)
+
+                socket.send(`USER ${user} 0 * :${user}`)
+                socket.send(`NICK ${nick}`)
+            }
+
+            socket.onmessage = message => {
+                console.log(message.data)
+
+                if(message.data.startsWith('PING')){
+                    const cookie = message.data.split(' ')[1]
+                    const reply = `PONG ${cookie}`
+                    socket.send(reply)
+                    return
+                }
+
+                const splitmsg = message.data.split(' ')
+
+                if(splitmsg[0] !== `:${hostname}`)
+                    return
+
+                const code = splitmsg[1]
+
+                switch(code){
+                    case "433":
+                        socket.close()
+                        reject("nickname already in use")
+                        break;
+                    case "001":
+                        socket.close()
+                        const welcome = splitmsg.slice(3,splitmsg.length-1).join(' ').slice(1)
+                        resolve(welcome)
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            socket.onerror = err => {
+                console.error(err)
+                reject("failed to connect to server")
+            }
+
+            socket.onclose = () => console.log("closed")
+        })
     }
 
     joinChannel(channel,fn){
@@ -122,8 +178,48 @@ class IrcClient {
         })
     }
 
+    callCommand(command,initialState,fn){
+        const quit = () => this.socket.removeEventListener('message',callback)
+
+        const callback = message => {
+            const splitmsg = message.data.split(' ')
+
+            if(splitmsg[0] !== `:${this.#hostname}`)
+                return
+
+            const code = splitmsg[1]
+
+            fn(initialState,{code,args: splitmsg.splice(2)},quit)
+        }
+
+
+
+        this.send(command)
+        this.socket.addEventListener('message',callback)
+    }
+
     listChannels(fn){
-        let channels = []
+        this.callCommand('LIST',[],(channels,{code,args},quit) => {
+            console.log("gey")
+            switch(parseInt(code)){
+                case 321:
+                    break;
+                case 322:
+                    channels.push({
+                        name: args[1],
+                        description: args.splice(4).join(' ')
+                    })
+
+                    break;
+                case 323:
+                    fn(channels)
+                    quit()
+                    break;
+                default:
+                    break;
+            }
+        })
+        /*let channels = []
 
         const callback = message => {
             const splitmsg = message.data.split(' ')
@@ -153,7 +249,7 @@ class IrcClient {
         }
 
         this.send('LIST')
-        this.socket.addEventListener('message',callback)
+        this.socket.addEventListener('message',callback)*/
     }
 
     send(msg){

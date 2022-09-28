@@ -21,15 +21,18 @@ export default ({children}) => {
     }),[nick,server,pass])
 
     useEffect(() => {
-        ircClient.listChannels(channels => {
-            console.log('channels',channels)
-            dispatch(setChannels(channels))
-        })
 
-        return () => ircClient.quit()
+        const handler = () => ircClient.quit()
+
+        window.addEventListener('beforeunload',handler)
+
+
+        return () => {
+            ircClient.quit()
+            window.removeEventListener('beforeunload',handler)
+        }
     },[nick,server,pass])
 
-    useEffect(() => () => ircClient.quit(),[])
 
     return (
         <IrcContext.Provider value={ircClient}>

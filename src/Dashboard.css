@@ -5,6 +5,8 @@
 .dashboard {
     height: 100vh;
     width: 100vw;
+    overflow: hidden;
+    box-sizing: border-box;
     display:grid;
     grid-template-columns: 25% 1fr;
     grid-template-rows: 80px 1fr;
@@ -30,6 +32,32 @@
     display: flex;
     flex-flow: row nowrap;
     gap: 20px;
+}
+
+.topbar .dropbeat {
+    width: 200px;
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    overflow: visible;
+    right:0;
+    flex-flow: column nowrap;
+    justify-content: flex-end;
+}
+
+.dropbeat > .dropbutton {
+    width:100%;
+    margin: 2px 0;
+    border:solid black;
+    background-color:darkslategray;
+    color: white;
+    text-align: center;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.dropbutton:hover{
+    background-color: cadetblue;
 }
 
 .chat {

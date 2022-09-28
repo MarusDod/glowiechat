@@ -8,10 +8,31 @@
     background-image: linear-gradient(to top,rgba(16, 48, 130, 0.8),rgb(54, 102, 190),rgba(18, 56, 154, 0.8));
 }
 
+@keyframes showmodal {
+    from {bottom: -200px; opacity: 0;}
+    to {bottom:3vh;opacity:1;}
+}
+
+#modal {
+    position: fixed;
+    bottom: 3vh;
+    z-index: 1;
+    background-color: crimson;
+    width: 400px;
+    height:3em;
+    border-radius: 10px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    animation-name: showmodal;
+    animation-duration: 0.5s;
+}
+
 #loginform {
     width: 500px;
     height:70%;
     background-color:  rgb(0, 0, 0,0.2);
+    box-shadow: 2px 2px 10px black;
     color: white;
     border-radius: 2%;
 

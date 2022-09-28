@@ -1,0 +1,63 @@
+.channel {
+    border: 2px solid rgb(50, 55, 72);
+    cursor: pointer;
+    width: auto;
+    height: 5em;
+    padding: 5px;
+
+    display: grid;
+    grid-template-areas:
+        'logo name date'
+        'logo peek read';
+    grid-template-columns: 20% 1fr 15%;
+    grid-template-rows: 40% 1fr,
+}
+
+.channel:hover {
+    background-color: rgb(50, 55, 72);
+}
+
+.light {
+    background-color: lightpink;
+}
+
+.logo {
+    grid-area: logo;
+    margin: auto;
+}
+
+.overflow {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.name {
+    grid-area: name;
+    margin-top: auto;
+}
+
+.peek {
+    grid-area: peek;
+    margin-top: auto;
+}
+
+.date {
+    grid-area: date;
+    margin-top: auto;
+}
+
+.read {
+    grid-area: read;
+    margin-top: auto;
+}
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,95 @@
+#back {
+    height:100%;
+    width: 100%;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: linear-gradient(to top,rgba(16, 48, 130, 0.8),rgb(54, 102, 190),rgba(18, 56, 154, 0.8));
+}
+
+#loginform {
+    width: 500px;
+    height:70%;
+    background-color:  rgb(0, 0, 0,0.2);
+    color: white;
+    border-radius: 2%;
+
+    display:grid;
+    grid-template: 
+        'logintext' 20%
+        'nickname' 120px
+        'password' 120px
+        'server' 120px
+        'connect' 1fr / 1fr;
+}
+
+.textInput {
+    font-size: 1.3em;
+    margin: auto;
+    border: none;
+    color:white;
+    border-bottom: solid 1px black;
+    background-color: inherit;
+}
+
+.textInput::placeholder {
+    opacity:40%;
+    color:white;
+}
+
+.textInput:focus {
+    outline: none;
+}
+
+.textInput:focus::placeholder {
+    color:transparent;
+}
+
+#logintext {
+    grid-area: logintext;
+    box-sizing: border-box;
+    width:inherit;
+    border-bottom: solid 2px black;
+    padding: 1em;
+    font-size: 2em;
+    font-weight: bold;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#nickname {
+    grid-area: nickname;
+    margin:auto;
+}
+
+#password {
+    grid-area: password;
+    padding:2em;
+    margin:auto;
+}
+
+#server {
+    grid-area: server;
+    padding:2em;
+    margin:auto;
+}
+
+#connect {
+    grid-area: connect;
+    cursor: pointer;
+    margin:auto;
+    text-align: center;
+    padding:0.4em 4em 0.4em;
+    font-size: 1.5em;
+    border-radius: 20px;
+    border:none;
+    color:white;
+    font-weight: bold;
+    background-color: blue;
+}
+
+#connect:hover {
+    background-color: darkblue;
+}

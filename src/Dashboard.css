@@ -1,0 +1,43 @@
+:root {
+    font-size: 1.2em;
+}
+
+.dashboard {
+    height: 100vh;
+    width: 100vw;
+    display:grid;
+    grid-template-columns: 25% 1fr;
+    grid-template-rows: 80px 1fr;
+    grid-template-areas: 
+        'searchbar topbar'
+        'channels chat'
+}
+
+.searchbar {
+    grid-area: searchbar;
+    border: 2px solid black;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-flow: "row nowrap";
+}
+
+.topbar {
+    grid-area: topbar;
+    border: 2px solid black;
+
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 20px;
+}
+
+.chat {
+    grid-area: chat;
+
+    display: grid;
+    grid-template: 
+        'messages' 1fr
+        'input' 4em
+        / 1fr;
+}

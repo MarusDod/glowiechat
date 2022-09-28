@@ -15,7 +15,7 @@ export default ({children}) => {
     const server = useSelector(state => state.server.value)
 
     const ircClient = useMemo(() => new IrcClient({
-        server: `ws://${server}`,
+        server,
         nickname: nick,
         pass
     }),[nick,server,pass])

@@ -12,7 +12,7 @@ class IrcClient {
         this.#listeners = new Map()
         this.#hostname = new URL(server).hostname
 
-        const socket = new WebSocket(server)
+        const socket = new WebSocket(`wss://${server}`)
         this.socket = socket
 
         socket.onopen = () => {
@@ -71,9 +71,9 @@ class IrcClient {
 
     static connect({nick,user = nick,pass = "",server}){
         return new Promise((resolve,reject) => {
-            const socket = new WebSocket(`ws://${server}`)
+            const socket = new WebSocket(`wss://${server}`)
 
-            const hostname = new URL('ws://' + server).hostname
+            const hostname = new URL('wss://' + server).hostname
 
             socket.onopen = () => {
                 console.log("connected")

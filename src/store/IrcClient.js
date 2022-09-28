@@ -73,7 +73,7 @@ class IrcClient {
         return new Promise((resolve,reject) => {
             const socket = new WebSocket(`wss://${server}`)
 
-            const hostname = new URL('wss://' + server).hostname
+            const hostname = new URL('ws://' + server).hostname
 
             socket.onopen = () => {
                 console.log("connected")

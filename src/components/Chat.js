@@ -17,6 +17,7 @@ const inputStyle = {
 const messageListStyle = {
     gridArea: 'messages',
     backgroundColor:"rgb(37,41,54)",
+    width:"100%",
     display:'flex',
     flexFlow: 'column-reverse nowrap',
     justifyContent: 'flex-start',

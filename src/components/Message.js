@@ -7,6 +7,8 @@ const messageStyle = {
     display: 'flex',
     flexWrap: 'nowrap',
     justifyContent: 'flex-start',
+    margin:"1em",
+    flexDirection:"row",
     alignItems: 'flex-end',
     gap: "1em",
 }
@@ -27,7 +29,7 @@ export default ({data}) => {
     const mynick = useSelector(state => state.nick.value)
 
     return (
-        <div style={{...messageStyle,flexDirection: data.nick == mynick ? 'row-reverse' : 'row'}}>
+        <div style={{...messageStyle,...(data.nick == mynick ? {flexDirection: 'row-reverse',alignSelf:"flex-end"} : {})}}>
             <img 
                 src={Pepe}
                 alt="profile"

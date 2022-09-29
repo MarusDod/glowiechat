@@ -10,7 +10,7 @@ class IrcClient {
         this.#ready = false
         this.#pending = []
         this.#listeners = new Map()
-        this.#hostname = new URL(server).hostname
+        this.#hostname = new URL(`wss://${server}`).hostname
 
         const socket = new WebSocket(`wss://${server}`)
         this.socket = socket
@@ -188,6 +188,7 @@ class IrcClient {
                 return
 
             const code = splitmsg[1]
+            console.log("FDS")
 
             fn(initialState,{code,args: splitmsg.splice(2)},quit)
         }

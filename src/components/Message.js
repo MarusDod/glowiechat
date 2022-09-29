@@ -3,6 +3,7 @@ import Pepe from '../assets/pepe.jpeg'
 
 const messageStyle = {
     width:"100%",
+    color:"white",
     margin:"10px",
     display: 'flex',
     flexWrap: 'nowrap',

@@ -9,6 +9,7 @@ const channelListStyle = {
     gridArea: "channels",
     display: "flex",
     flexFlow: "column nowrap",
+    border: "2px solid black",
     justifyContent: "flex-start",
     overflowY: "scroll",
 }

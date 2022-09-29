@@ -2,7 +2,7 @@
     border: 2px solid rgb(50, 55, 72);
     cursor: pointer;
     width: auto;
-    height: 5em;
+    min-height: 4em;
     padding: 5px;
 
     display: grid;

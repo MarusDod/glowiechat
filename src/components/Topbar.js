@@ -6,7 +6,7 @@ const currChannelStyle = {
     height: "100%",
     display: "flex",
     flexFlow: "column nowrap",
-    fontSize: "1.2em",
+    fontSize: "1em",
     justifyContent: "space-evenly",
     marginRight: "auto",
     marginLeft: "10px"

@@ -1,7 +1,7 @@
 .channel {
-    border: 2px solid rgb(50, 55, 72);
     cursor: pointer;
     width: auto;
+    border-radius: 15px;
     min-height: 4em;
     padding: 5px;
 
@@ -14,11 +14,11 @@
 }
 
 .channel:hover {
-    background-color: rgb(50, 55, 72);
+    background-color:  #282727;
 }
 
 .light {
-    background-color: lightpink;
+    background-color: #004daa;
 }
 
 .logo {

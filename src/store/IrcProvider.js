@@ -1,10 +1,13 @@
-import { createContext, useContext, useEffect, useMemo } from "react"
+import { createContext, useContext, useEffect, useMemo, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { addChannel, setChannels } from "."
 import IrcClient from "./IrcClient"
 
 export const IrcContext = createContext()
 export const useIrcClient = () => useContext(IrcContext)
+
+export const MessagesContext = createContext()
+export const useMessages = () => useContext(MessagesContext)
 
 export default ({children}) => {
 
@@ -19,6 +22,8 @@ export default ({children}) => {
         nickname: nick,
         pass
     }),[nick,server,pass])
+
+    const messages = useState({})
 
     useEffect(() => {
 
@@ -36,6 +41,8 @@ export default ({children}) => {
 
     return (
         <IrcContext.Provider value={ircClient}>
-            {children}
+            <MessagesContext.Provider value={messages}>
+                {children}
+            </MessagesContext.Provider>
         </IrcContext.Provider>
 )}

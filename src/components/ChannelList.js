@@ -2,14 +2,13 @@ import { toBePartiallyChecked } from "@testing-library/jest-dom/dist/matchers"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { setChannels, setCurrentChannel } from "../store"
-import { useIrcClient } from "../store/IrcProvider"
+import { useIrcClient, useMessages } from "../store/IrcProvider"
 import ChannelEntry from "./ChannelEntry"
 
 const channelListStyle = {
     gridArea: "channels",
     display: "flex",
     flexFlow: "column nowrap",
-    border: "2px solid black",
     justifyContent: "flex-start",
     overflowY: "scroll",
 }
@@ -25,12 +24,23 @@ const channelEmptyStyle = {
 export default () => {
     const channels = useSelector(state => state.channels.value)
     const currentChannel = useSelector(state => state.currentChannel.value)
+    const [messages,setMessages] = useMessages()
+
     const dispatch = useDispatch()
 
     const ircClient = useIrcClient()
 
+    useEffect(() => {
+        const destructors = channels.map(ch => ircClient.onMessage(ch.name,message => {
+            setMessages(messages => 
+                ({...messages,[ch.name]: [message,...messages[ch.name]]}))
+        }))
+
+        return () => destructors.forEach(d => d())
+    },[channels])
+
     const setActive = (ch,active) => {
-        if(active){
+        if(active === true){
             dispatch(setCurrentChannel(null))
             return
         }
@@ -42,6 +52,8 @@ export default () => {
         ircClient.listChannels(channels => {
             console.log('channels',channels)
             dispatch(setChannels(channels))
+
+            channels.forEach(ch => ircClient.joinChannel(ch.name))
         })
     }
 
@@ -57,7 +69,7 @@ export default () => {
                     />
                 ))}
             </div>)}
-            {channels.length == 0 && (
+            {channels.length === 0 && (
                 <div style={channelEmptyStyle}>
                     <button 
                         onClick={joinChannels}

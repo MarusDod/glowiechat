@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { removeChannel, setCurrentChannel } from "../store"
-import { useIrcClient } from "../store/IrcProvider"
+import { useIrcClient, useMessages } from "../store/IrcProvider"
 import Message from "./Message"
 
 const inputStyle = {
@@ -17,8 +17,9 @@ const inputStyle = {
 
 const messageListStyle = {
     gridArea: 'messages',
-    backgroundColor:"rgb(37,41,54)",
+    backgroundColor:"rgb(21, 21, 23)",
     width:"100%",
+    height:"100%",
     display:'flex',
     flexFlow: 'column-reverse nowrap',
     justifyContent: 'flex-start',
@@ -33,30 +34,34 @@ export default () => {
     const currentChannel = useSelector(state => state.currentChannel.value)
     const nick = useSelector(state => state.nick.value)
     const server = useSelector(state => state.server.value)
+    const [messages,setMessages] = useMessages()
+
     const dispatch = useDispatch()
 
-    const [messages,setMessages] = useState([])
 
     const [inputMessage,setInputMessage] = useState("")
 
     useEffect(() => {
-        setMessages([])
-        if(!currentChannel){
+        if(!currentChannel)
             return
-        }
 
-        ircClient.joinChannel(currentChannel.name,message => {
-            setMessages(messages => [message,...messages])
-        })
+        if(!messages[currentChannel.name])
+            setMessages(messages => ({...messages,[currentChannel.name]: []}))
+
+        /*const stopListening = ircClient.joinChannel(currentChannel.name,message => {
+            setMessages(messages => 
+                ({...messages,[currentChannel.name]: [message,...messages[currentChannel.name]]}))
+        })*/
 
         const handler = ev => {
             if(!currentChannel)
                 return
-            console.log(ev)
+                
             switch(ev.code){
                 case "Escape":
                     ircClient.leaveChannel(currentChannel.name)
 
+                    setMessages(messages => ({...messages,[currentChannel.name]: {}}))
                     dispatch(removeChannel(currentChannel))
                     dispatch(setCurrentChannel(null))
                     break;
@@ -76,15 +81,17 @@ export default () => {
 
     const handleMessageSubmit = ev => {
         ev.preventDefault()
+
         if(!inputMessage)
             return
 
         const newMessage = {
             nick,
-            content: inputMessage
+            content: inputMessage,
+            timestamp: new Date().getTime(0)
         }
 
-        setMessages([newMessage,...messages])
+        setMessages(messages => ({...messages,[currentChannel.name]: [newMessage,...messages[currentChannel.name]]}))
 
         ircClient.sendMessage(currentChannel.name,inputMessage)
 
@@ -95,23 +102,27 @@ export default () => {
         <div className="chat">
             {currentChannel && (<>
             <div style={messageListStyle}>
-                {messages.map((m,index) => (
-                    <Message key={index} data={m} />
+                {messages[currentChannel.name]?.map((m,index) => (
+                    <Message key={m.timestamp} data={m} />
                 ))}
             </div>
             <div style={inputStyle}>
-                <div>
+                <label style={{cursor:'pointer'}}>
+                    <input type="file" accept="image/jpeg, image/jpg, image/png" style={{display:'none'}} />
                     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-paperclip" viewBox="0 0 16 16">
                         <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z"/>
                     </svg>
-                </div>
+                </label>
                 <form onSubmit={handleMessageSubmit} style={{flex:1}}>
                     <input 
+                        className="dontfocus"
                         type="text" 
                         value={inputMessage} 
                         onChange={ev => setInputMessage(ev.target.value)} 
+                        placeholder="Write a message..."
                         {...(currentChannel ? {}:{'disabled':true})}
-                        style={{width:"100%",fontSize:"1.2em",padding:"0.2em"}} />
+                        autoFocus
+                        style={{width:"100%",fontSize:"1em",wordWrap:"break-word",padding:"0.4em",backgroundColor:"rgb(73, 73, 73)",color:"white",border:"none"}} />
                 </form>
                 <div style={{margin:'auto 10px'}}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-emoji-smile" viewBox="0 0 16 16">

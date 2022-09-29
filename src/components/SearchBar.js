@@ -33,7 +33,7 @@ export default () => {
                 </svg>
             </div>
             <form onSubmit={handleSubmit}>
-                <input type="text" value={val} onChange={handleChange} style={{boxSizing:"border-box",width:"90%",margin:"auto 10px",fontSize:"1.2em"}} />
+                <input className="dontfocus" type="text" value={val} onChange={handleChange} style={{boxSizing:"border-box",width:"90%",margin:"auto 10px",padding:".3em",fontSize:"1.2em",borderRadius:"10px",backgroundColor:"rgb(73, 73, 73)",border:"none",color:"white"}} />
             </form>
         </div>
     )

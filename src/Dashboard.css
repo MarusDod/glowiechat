@@ -1,5 +1,6 @@
 :root {
     font-size: 1.2em;
+    color: white;
 }
 
 .dashboard {
@@ -8,7 +9,7 @@
     overflow: hidden;
     box-sizing: border-box;
     display:grid;
-    grid-template-columns: minmax(200px,20%) 1fr;
+    grid-template-columns: minmax(200px,25%) 1fr;
     grid-template-rows: 80px 1fr;
     grid-template-areas: 
         'searchbar topbar'
@@ -17,7 +18,6 @@
 
 .searchbar {
     grid-area: searchbar;
-    border: 2px solid black;
 
     display: flex;
     justify-content: space-between;
@@ -27,7 +27,6 @@
 
 .topbar {
     grid-area: topbar;
-    border: 2px solid black;
 
     display: flex;
     flex-flow: row nowrap;
@@ -60,12 +59,19 @@
     background-color: cadetblue;
 }
 
+.dontfocus {
+    outline:none;
+    border:none;
+}
+
 .chat {
     grid-area: chat;
+    overflow: hidden;
+    /*color: rgb(21, 21, 23);*/
 
     display: grid;
     grid-template: 
         'messages' 1fr
-        'input' 4em
+        'input' 3.5em
         / 1fr;
 }

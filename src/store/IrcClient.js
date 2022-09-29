@@ -9,7 +9,6 @@ class IrcClient {
         this.#counter = 0
         this.#ready = false
         this.#pending = []
-        this.#listeners = new Map()
         this.#hostname = new URL(`wss://${server}`).hostname
 
         const socket = new WebSocket(`wss://${server}`)
@@ -46,26 +45,6 @@ class IrcClient {
             if(message.data.startsWith('ERROR'))
                 return
 
-            const splitmsg = message.data.split(' ')
-
-            console.log(message.data)
-            const match = splitmsg[0].match(/:(.*)!/)
-            if(!match)
-                return
-
-            const nick = match[1]
-
-            //const username = splitmsg[0].match(/!(.*)@/)[1]
-            const command = splitmsg[1]
-
-            this.#listeners.forEach(({event,fn}) => {
-                if(command === event.toUpperCase()){
-                    fn({
-                        nick,
-                        args: splitmsg.splice(2)
-                    })
-                }
-            })
         })
     }
 
@@ -126,14 +105,9 @@ class IrcClient {
         })
     }
 
-    joinChannel(channel,fn){
+    joinChannel(channel){
         this.send(`JOIN ${channel}`)
-        const id = this.onMessage(channel,fn)
-
-        return () => {
-            this.leaveChannel(channel)
-            this.off(id)
-        }
+        //return this.onMessage(channel,fn)
     }
 
     leaveChannel(channel){
@@ -144,35 +118,45 @@ class IrcClient {
         this.send(`PRIVMSG ${channel} ${message}`)
     }
 
-    on(event,fn){
+    onUser(event,fn){
+        const callback = message => {
+            const splitmsg = message.data.split(' ')
 
-        const id = this.#counter++
-        this.#listeners.set(id,{
-            event,
-            fn
-        })
+            console.log(message)
+            const match = splitmsg[0].match(/:(.*)!/)
+            if(!match)
+                return
 
-        return id
-    }
+            const nick = match[1]
 
-    off(id){
-        this.#listeners.delete(id)
+            //const username = splitmsg[0].match(/!(.*)@/)[1]
+            const command = splitmsg[1]
+
+            if(command.toUpperCase() === event.toUpperCase())
+                fn(nick,splitmsg.slice(2))
+        }
+        this.socket.addEventListener('message',callback)
+
+        return () => this.socket.removeEventListener('message',callback)
     }
 
     onJoin(fn){
-        return this.on('join',fn)
+        return this.onUser('join',fn)
     }
 
     onPart(fn){
-        return this.on('part',fn)
+        return this.onUser('part',fn)
     }
 
     onMessage(channel,fn){
-        return this.on('privmsg',({nick,args}) => {
+
+        return this.onUser('privmsg',(nick,args) => {
+
             if(args[0] === channel){
                 fn({
                     nick,
-                    content:args.splice(1).join(' ').substring(1)
+                    content:args.slice(1).join(' ').substring(1),
+                    timestamp: new Date().getTime()
                 })
             }
         })

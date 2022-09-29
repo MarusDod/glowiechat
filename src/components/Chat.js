@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { removeChannel, setCurrentChannel } from "../store"
 import { useIrcClient } from "../store/IrcProvider"
 import Message from "./Message"
 
@@ -32,6 +33,7 @@ export default () => {
     const currentChannel = useSelector(state => state.currentChannel.value)
     const nick = useSelector(state => state.nick.value)
     const server = useSelector(state => state.server.value)
+    const dispatch = useDispatch()
 
     const [messages,setMessages] = useState([])
 
@@ -46,7 +48,31 @@ export default () => {
         ircClient.joinChannel(currentChannel.name,message => {
             setMessages(messages => [message,...messages])
         })
+
+        const handler = ev => {
+            if(!currentChannel)
+                return
+            console.log(ev)
+            switch(ev.code){
+                case "Escape":
+                    ircClient.leaveChannel(currentChannel.name)
+
+                    dispatch(removeChannel(currentChannel))
+                    dispatch(setCurrentChannel(null))
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        document.addEventListener('keydown',handler)
+
+        return () => {
+            document.removeEventListener('keydown',handler)
+        }
+
     },[currentChannel,nick,server])
+
 
     const handleMessageSubmit = ev => {
         ev.preventDefault()
@@ -85,7 +111,7 @@ export default () => {
                         value={inputMessage} 
                         onChange={ev => setInputMessage(ev.target.value)} 
                         {...(currentChannel ? {}:{'disabled':true})}
-                        style={{width:"100%",fontSize:"1.5em"}} />
+                        style={{width:"100%",fontSize:"1.2em",padding:"0.2em"}} />
                 </form>
                 <div style={{margin:'auto 10px'}}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-emoji-smile" viewBox="0 0 16 16">

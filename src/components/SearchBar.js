@@ -33,7 +33,7 @@ export default () => {
                 </svg>
             </div>
             <form onSubmit={handleSubmit}>
-                <input type="text" value={val} onChange={handleChange} style={{boxSizing:"border-box",width:"90%",margin:"auto 10px",fontSize:"1.6em"}} />
+                <input type="text" value={val} onChange={handleChange} style={{boxSizing:"border-box",width:"90%",margin:"auto 10px",fontSize:"1.2em"}} />
             </form>
         </div>
     )

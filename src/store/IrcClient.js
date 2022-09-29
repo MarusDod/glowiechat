@@ -220,37 +220,6 @@ class IrcClient {
                     break;
             }
         })
-        /*let channels = []
-
-        const callback = message => {
-            const splitmsg = message.data.split(' ')
-
-            if(splitmsg[0] !== `:${this.#hostname}`)
-                return
-
-            
-            switch(parseInt(splitmsg[1])){
-                case 321:
-                    break;
-                case 322:
-                    console.log("list",splitmsg[1])
-                    channels.push({
-                        name: splitmsg[3],
-                        description: splitmsg.splice(6).join(' ')
-                    })
-
-                    break;
-                case 323:
-                    this.socket.removeEventListener('message',callback)
-                    fn(channels)
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        this.send('LIST')
-        this.socket.addEventListener('message',callback)*/
     }
 
     send(msg){

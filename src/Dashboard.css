@@ -8,7 +8,7 @@
     overflow: hidden;
     box-sizing: border-box;
     display:grid;
-    grid-template-columns: 25% 1fr;
+    grid-template-columns: minmax(200px,20%) 1fr;
     grid-template-rows: 80px 1fr;
     grid-template-areas: 
         'searchbar topbar'

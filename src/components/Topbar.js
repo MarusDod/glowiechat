@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import { removeChannel, setCurrentChannel } from "../store"
+import { useIrcClient, useMessages } from "../store/IrcProvider"
 
 const currChannelStyle = {
     height: "100%",
@@ -14,7 +16,11 @@ const currChannelStyle = {
 
 export default () => {
     const currentChannel = useSelector(state => state.currentChannel.value)
+    const [messages,setMessages] = useMessages()
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const ircClient = useIrcClient()
 
     const [showDropdown,setShowDropdown] = useState(false)
 
@@ -25,6 +31,14 @@ export default () => {
     const logoutClick = () => {
         setShowDropdown(false)
         navigate('/')
+    }
+
+    const leaveChannel = () => {
+        ircClient.leaveChannel(currentChannel.name)
+
+        setMessages(messages => ({...messages,[currentChannel.name]: {}}))
+        dispatch(removeChannel(currentChannel))
+        dispatch(setCurrentChannel(null))
     }
 
     return (
@@ -49,8 +63,11 @@ export default () => {
                 <svg onClick={toggleDropdown} xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="currentColor" className="bi bi-three-dots-vertical" viewBox="0 0 16 16">
                     <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
                 </svg>
-                {showDropdown && (<div className="dropbeat" onClick={logoutClick} >
-                    <button className="dropbutton">
+                {showDropdown && (<div className="dropbeat" >
+                    <button className="dropbutton" onClick={leaveChannel}>
+                        Leave Channel
+                    </button>
+                    <button className="dropbutton"  onClick={logoutClick}>
                         Logout
                     </button>
                 </div>)}

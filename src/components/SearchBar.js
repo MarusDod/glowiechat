@@ -1,11 +1,14 @@
 import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { addChannel, setCurrentChannel } from "../store"
+import IrcClient from "../store/IrcClient"
+import { useIrcClient } from "../store/IrcProvider"
 
 
 export default () => {
     const [val,setVal] = useState("")
     const dispatch = useDispatch()
+    const ircClient = useIrcClient()
 
     const handleChange = ev => {
         setVal(ev.target.value)
@@ -21,6 +24,8 @@ export default () => {
 
         dispatch(addChannel(newchannel))
         dispatch(setCurrentChannel(newchannel))
+
+        ircClient.joinChannel(newchannel.name)
 
         setVal("")
     }

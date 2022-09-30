@@ -88,6 +88,7 @@ export default () => {
         const newMessage = {
             nick,
             content: inputMessage,
+            type: 'message',
             timestamp: new Date().getTime(0)
         }
 

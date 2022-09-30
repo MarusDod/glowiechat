@@ -33,7 +33,7 @@ export default () => {
     useEffect(() => {
         const destructors = channels.map(ch => ircClient.onMessage(ch.name,message => {
             setMessages(messages => 
-                ({...messages,[ch.name]: [message,...messages[ch.name]]}))
+                ({...messages,[ch.name]: [message,...(messages[ch.name] ?? [])]}))
         }))
 
         return () => destructors.forEach(d => d())

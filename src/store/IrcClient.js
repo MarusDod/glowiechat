@@ -1,12 +1,9 @@
 class IrcClient {
-    #listeners
-    #counter
     #hostname
     #ready
     #pending
 
     constructor({server,nickname,username = nickname,pass=""}) {
-        this.#counter = 0
         this.#ready = false
         this.#pending = []
         this.#hostname = new URL(`wss://${server}`).hostname
@@ -122,7 +119,7 @@ class IrcClient {
         const callback = message => {
             const splitmsg = message.data.split(' ')
 
-            console.log(message)
+            console.log(message.data)
             const match = splitmsg[0].match(/:(.*)!/)
             if(!match)
                 return
@@ -140,26 +137,56 @@ class IrcClient {
         return () => this.socket.removeEventListener('message',callback)
     }
 
-    onJoin(fn){
-        return this.onUser('join',fn)
-    }
-
-    onPart(fn){
-        return this.onUser('part',fn)
-    }
-
-    onMessage(channel,fn){
-
-        return this.onUser('privmsg',(nick,args) => {
+    onJoin(channel,fn){
+        return this.onUser('join',(nick,args) => {
+            if(args[0].startsWith(':'))
+                args[0] = args[0].substring(1)
 
             if(args[0] === channel){
                 fn({
                     nick,
+                    type: 'join',
+                    timestamp: new Date().getTime(),
+                    content: ""
+                })
+            }
+        })
+    }
+
+    onPart(channel,fn){
+        return this.onUser('part',(nick,args) => {
+            if(args[0] === channel){
+                fn({
+                    nick,
+                    type: 'part',
+                    timestamp: new Date().getTime(),
+                    content: ""
+                })
+            }
+        })
+    }
+
+    onMessage(channel,fn){
+
+        const d1 = this.onUser('privmsg',(nick,args) => {
+            if(args[0] === channel){
+                fn({
+                    nick,
+                    type: 'message',
                     content:args.slice(1).join(' ').substring(1),
                     timestamp: new Date().getTime()
                 })
             }
         })
+
+        const d2 = this.onJoin(channel,fn)
+        const d3 = this.onPart(channel,fn)
+
+        return () => {
+            d1()
+            d2()
+            d3()
+        }
     }
 
     callCommand(command,initialState,fn){
@@ -172,7 +199,6 @@ class IrcClient {
                 return
 
             const code = splitmsg[1]
-            console.log("FDS")
 
             fn(initialState,{code,args: splitmsg.splice(2)},quit)
         }
@@ -185,7 +211,6 @@ class IrcClient {
 
     listChannels(fn){
         this.callCommand('LIST',[],(channels,{code,args},quit) => {
-            console.log("gey")
             switch(parseInt(code)){
                 case 321:
                     break;

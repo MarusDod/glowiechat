@@ -29,7 +29,7 @@ export default props => {
                     {exampleProps.date}
                 </div>
                 <div className='read' >
-                    {exampleProps.read}
+                    {/* TODO!!! exampleProps.read*/}
                 </div>
             </div>
     )

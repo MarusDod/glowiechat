@@ -61,7 +61,7 @@ export default () => {
                 case "Escape":
                     ircClient.leaveChannel(currentChannel.name)
 
-                    setMessages(messages => ({...messages,[currentChannel.name]: {}}))
+                    setMessages(messages => ({...messages,[currentChannel.name]: []}))
                     dispatch(removeChannel(currentChannel))
                     dispatch(setCurrentChannel(null))
                     break;

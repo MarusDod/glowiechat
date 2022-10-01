@@ -217,6 +217,7 @@ class IrcClient {
                 case 322:
                     channels.push({
                         name: args[1],
+                        members: parseInt(args[2]),
                         description: args.splice(4).join(' ')
                     })
 
@@ -226,6 +227,20 @@ class IrcClient {
                     quit()
                     break;
                 default:
+                    break;
+            }
+        })
+    }
+
+    listMembers(channel,fn){
+        this.callCommand(`names ${channel}`,{},(state,{code,args},quit) => {
+            switch(code){
+                case '353':
+                    const names = args.slice(3).join(' ').substring(1).split(' ')
+                    fn(names)
+                    break;
+                case '366':
+                    quit()
                     break;
             }
         })

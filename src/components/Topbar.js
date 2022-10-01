@@ -9,18 +9,84 @@ const currChannelStyle = {
     display: "flex",
     flexFlow: "column nowrap",
     fontSize: "1em",
+    cursor:'pointer',
     justifyContent: "space-evenly",
     marginRight: "auto",
     marginLeft: "10px"
 }
 
+const ModalChannel = ({channel,active,setInactive}) => {
+    const modalref = useRef()
+
+    useEffect(() => {
+        if(!active)
+            return
+
+
+        const handler = ev => {
+            if(modalref.current && !modalref.current.contains(ev.target)){
+                setInactive()
+            }
+        }
+
+        const keyhandler = ev => {
+            switch(ev.code){
+                case "Escape":
+                    setInactive()
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        document.addEventListener('keydown',keyhandler)
+
+        const timer = setTimeout(() => document.addEventListener('click',handler),500)
+
+        return () => {
+            clearTimeout(timer)
+            document.removeEventListener('click',handler)
+        }
+    },[active])
+
+    return (
+        <div className="modalchannel" style={{display: active ? 'flex' : 'none'}}>
+            <div ref={modalref} className={"modalcontent fadein"} style={{opacity: active ? 1 : 0}}>
+                <p>
+                    Channel: {channel.name}
+                </p>
+                <p>
+                    Description: {channel.description}
+                </p>
+                <p>
+                    Members:
+                </p>
+                <div className="modalmembers">
+                    {channel.members.map(m => (
+                        <div key={m}>{m}</div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export default () => {
     const currentChannel = useSelector(state => state.currentChannel.value)
     const [messages,setMessages] = useMessages()
+    const [members,setMembers] = useState([])
+    const [showModal,setShowModal] = useState(false)
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const ircClient = useIrcClient()
+
+    useEffect(() => {
+        if(!currentChannel)
+            return 
+
+        ircClient.listMembers(currentChannel.name,names => setMembers(names))
+    },[currentChannel])
 
     const [showDropdown,setShowDropdown] = useState(false)
 
@@ -43,13 +109,13 @@ export default () => {
 
     return (
         <div className="topbar">
-            {currentChannel && (<><div style={currChannelStyle}>
+            {currentChannel && (<><div style={currChannelStyle} onClick={() => setShowModal(true)}>
                 <div>
                     {currentChannel.name}
                 </div>
-                <div>
-                    8346 members
-                </div>
+                {members.length != 0 && (<div>
+                    {members.length} {currChannelStyle.members == 1 ? 'member' : 'members'}
+                </div>)}
             </div>
             <div style={{margin:"auto 0px"}}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
@@ -72,6 +138,7 @@ export default () => {
                     </button>
                 </div>)}
             </div>
+            {currentChannel && (<ModalChannel channel={{...currentChannel,members}} active={showModal} setInactive={() => setShowModal(false)} />)}
         </div>
     )
 }
